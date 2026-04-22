@@ -1,0 +1,145 @@
+{
+  "product_id": "85123A",
+  "product_description": "WHITE HANGING HEART T-LIGHT HOLDER",
+  "country": "ALL",
+  "cluster": 1,
+  "cluster_label": "Steady regulars",
+  "selected_model": "RF_Default",
+  "test_mape_selected": 77.14897784431318,
+  "warning_flag": "normal",
+  "recommendation": "Automation-ready; use forecast for replenishment planning.",
+  "statistics": {
+    "total_sales": 248337.61,
+    "avg_weekly_sales": 2387.86,
+    "recent_12week_avg": 2016.97,
+    "weeks_with_sales": 104,
+    "total_weeks": 104,
+    "pct_zero_weeks": 0.0,
+    "total_transactions": 5645,
+    "unique_customers": 1495
+  },
+  "recent_12_weeks": [
+    {
+      "week": "2011-09-19/2011-09-25",
+      "week_start": "2011-09-19",
+      "sales": 2103.76
+    },
+    {
+      "week": "2011-09-26/2011-10-02",
+      "week_start": "2011-09-26",
+      "sales": 1080.22
+    },
+    {
+      "week": "2011-10-03/2011-10-09",
+      "week_start": "2011-10-03",
+      "sales": 494.94
+    },
+    {
+      "week": "2011-10-10/2011-10-16",
+      "week_start": "2011-10-10",
+      "sales": 1866.49
+    },
+    {
+      "week": "2011-10-17/2011-10-23",
+      "week_start": "2011-10-17",
+      "sales": 667.1
+    },
+    {
+      "week": "2011-10-24/2011-10-30",
+      "week_start": "2011-10-24",
+      "sales": 1251.44
+    },
+    {
+      "week": "2011-10-31/2011-11-06",
+      "week_start": "2011-10-31",
+      "sales": 5240.94
+    },
+    {
+      "week": "2011-11-07/2011-11-13",
+      "week_start": "2011-11-07",
+      "sales": 1579.61
+    },
+    {
+      "week": "2011-11-14/2011-11-20",
+      "week_start": "2011-11-14",
+      "sales": 3770.07
+    },
+    {
+      "week": "2011-11-21/2011-11-27",
+      "week_start": "2011-11-21",
+      "sales": 2432.75
+    },
+    {
+      "week": "2011-11-28/2011-12-04",
+      "week_start": "2011-11-28",
+      "sales": 1949.84
+    },
+    {
+      "week": "2011-12-05/2011-12-11",
+      "week_start": "2011-12-05",
+      "sales": 1766.48
+    }
+  ],
+  "forecast_12_weeks": [
+    {
+      "week": "2011-12-12/2011-12-18",
+      "week_start": "2011-12-12",
+      "forecast_sales": 1430.51
+    },
+    {
+      "week": "2011-12-19/2011-12-25",
+      "week_start": "2011-12-19",
+      "forecast_sales": 419.89
+    },
+    {
+      "week": "2011-12-26/2012-01-01",
+      "week_start": "2011-12-26",
+      "forecast_sales": 0.37
+    },
+    {
+      "week": "2012-01-02/2012-01-08",
+      "week_start": "2012-01-02",
+      "forecast_sales": 863.05
+    },
+    {
+      "week": "2012-01-09/2012-01-15",
+      "week_start": "2012-01-09",
+      "forecast_sales": 1246.79
+    },
+    {
+      "week": "2012-01-16/2012-01-22",
+      "week_start": "2012-01-16",
+      "forecast_sales": 1133.6
+    },
+    {
+      "week": "2012-01-23/2012-01-29",
+      "week_start": "2012-01-23",
+      "forecast_sales": 1003.41
+    },
+    {
+      "week": "2012-01-30/2012-02-05",
+      "week_start": "2012-01-30",
+      "forecast_sales": 1085.15
+    },
+    {
+      "week": "2012-02-06/2012-02-12",
+      "week_start": "2012-02-06",
+      "forecast_sales": 1043.36
+    },
+    {
+      "week": "2012-02-13/2012-02-19",
+      "week_start": "2012-02-13",
+      "forecast_sales": 975.83
+    },
+    {
+      "week": "2012-02-20/2012-02-26",
+      "week_start": "2012-02-20",
+      "forecast_sales": 1061.09
+    },
+    {
+      "week": "2012-02-27/2012-03-04",
+      "week_start": "2012-02-27",
+      "forecast_sales": 1045.53
+    }
+  ]
+}

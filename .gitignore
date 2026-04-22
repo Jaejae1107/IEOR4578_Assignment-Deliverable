@@ -1,0 +1,11 @@
+.env
+__pycache__/
+.DS_Store
+error_fare_history.sqlite3
+error_fare_scan_output.json
+*.pyc
+.pytest_cache/
+.venv/
+.venv_pdf/
+data/raw/*.xlsx
+fortunetellers_artifacts/processed/

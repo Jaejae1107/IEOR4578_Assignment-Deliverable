@@ -1,0 +1,27 @@
+{
+  "best_k": 3,
+  "silhouette_scores": {
+    "3": 0.47671259727437076,
+    "4": 0.39325863910568337,
+    "5": 0.3680705038286858
+  },
+  "inertias": {
+    "3": 5886.712525434864,
+    "4": 5098.900068642533,
+    "5": 4340.924120480067
+  },
+  "cluster_counts": {
+    "-2": 1384,
+    "-1": 1711,
+    "0": 82,
+    "1": 1294,
+    "2": 218
+  },
+  "cluster_labels": {
+    "0": "High cancellation risk",
+    "1": "Steady regulars",
+    "2": "Volatile mid-range",
+    "-1": "Intermittent (Croston)",
+    "-2": "Truly sporadic"
+  }
+}
