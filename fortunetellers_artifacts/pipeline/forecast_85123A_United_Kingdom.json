@@ -5,24 +5,24 @@
   "cluster": 1,
   "cluster_label": "Steady regulars",
   "selected_model": "RF_Default",
-  "test_mape_selected": 77.14897784431318,
+  "test_mape_selected": 75.03573939834303,
   "warning_flag": "normal",
   "recommendation": "Automation-ready; use forecast for replenishment planning.",
   "statistics": {
-    "total_sales": 228340.76,
-    "avg_weekly_sales": 2195.58,
-    "recent_12week_avg": 1779.07,
+    "total_sales": 237531.21,
+    "avg_weekly_sales": 2283.95,
+    "recent_12week_avg": 1783.67,
     "weeks_with_sales": 104,
     "total_weeks": 104,
     "pct_zero_weeks": 0.0,
-    "total_transactions": 5433,
-    "unique_customers": 1445
+    "total_transactions": 5304,
+    "unique_customers": 1441
   },
   "recent_12_weeks": [
     {
       "week": "2011-09-19/2011-09-25",
       "week_start": "2011-09-19",
-      "sales": 1969.06
+      "sales": 2007.41
     },
     {
       "week": "2011-09-26/2011-10-02",
@@ -32,7 +32,7 @@
     {
       "week": "2011-10-03/2011-10-09",
       "week_start": "2011-10-03",
-      "sales": 474.29
+      "sales": 477.24
     },
     {
       "week": "2011-10-10/2011-10-16",
@@ -42,7 +42,7 @@
     {
       "week": "2011-10-17/2011-10-23",
       "week_start": "2011-10-17",
-      "sales": 438.0
+      "sales": 440.95
     },
     {
       "week": "2011-10-24/2011-10-30",
@@ -62,7 +62,7 @@
     {
       "week": "2011-11-14/2011-11-20",
       "week_start": "2011-11-14",
-      "sales": 3363.02
+      "sales": 3368.52
     },
     {
       "week": "2011-11-21/2011-11-27",
@@ -72,74 +72,74 @@
     {
       "week": "2011-11-28/2011-12-04",
       "week_start": "2011-11-28",
-      "sales": 1751.24
+      "sales": 1753.79
     },
     {
       "week": "2011-12-05/2011-12-11",
       "week_start": "2011-12-05",
-      "sales": 1476.43
+      "sales": 1479.38
     }
   ],
   "forecast_12_weeks": [
     {
       "week": "2011-12-12/2011-12-18",
       "week_start": "2011-12-12",
-      "forecast_sales": 1333.75
+      "forecast_sales": 1475.15
     },
     {
       "week": "2011-12-19/2011-12-25",
       "week_start": "2011-12-19",
-      "forecast_sales": 405.06
+      "forecast_sales": 447.69
     },
     {
       "week": "2011-12-26/2012-01-01",
       "week_start": "2011-12-26",
-      "forecast_sales": 0.36
+      "forecast_sales": 0.63
     },
     {
       "week": "2012-01-02/2012-01-08",
       "week_start": "2012-01-02",
-      "forecast_sales": 716.17
+      "forecast_sales": 973.72
     },
     {
       "week": "2012-01-09/2012-01-15",
       "week_start": "2012-01-09",
-      "forecast_sales": 1174.06
+      "forecast_sales": 1382.34
     },
     {
       "week": "2012-01-16/2012-01-22",
       "week_start": "2012-01-16",
-      "forecast_sales": 907.13
+      "forecast_sales": 1142.93
     },
     {
       "week": "2012-01-23/2012-01-29",
       "week_start": "2012-01-23",
-      "forecast_sales": 885.38
+      "forecast_sales": 958.27
     },
     {
       "week": "2012-01-30/2012-02-05",
       "week_start": "2012-01-30",
-      "forecast_sales": 907.41
+      "forecast_sales": 1217.81
     },
     {
       "week": "2012-02-06/2012-02-12",
       "week_start": "2012-02-06",
-      "forecast_sales": 778.59
+      "forecast_sales": 1108.64
     },
     {
       "week": "2012-02-13/2012-02-19",
       "week_start": "2012-02-13",
-      "forecast_sales": 819.95
+      "forecast_sales": 1086.09
     },
     {
       "week": "2012-02-20/2012-02-26",
       "week_start": "2012-02-20",
-      "forecast_sales": 768.57
+      "forecast_sales": 1059.38
     },
     {
       "week": "2012-02-27/2012-03-04",
       "week_start": "2012-02-27",
-      "forecast_sales": 843.0
+      "forecast_sales": 1071.19
     }
   ]
 }

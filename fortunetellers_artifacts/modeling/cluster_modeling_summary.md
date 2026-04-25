@@ -6,77 +6,77 @@ This report summarizes the selected model for each demand cluster and the strong
 
 | Cluster | Label | Selected Model | Valid MAPE | Test MAPE | LGBM Baseline | Delta vs LGBM |
 | --- | --- | --- | --- | --- | --- | --- |
-| -2 | Truly sporadic | LGBM_Default | 83.19 | 93.69 | 93.69 | 0.00 |
-| -1 | Intermittent (Croston) | RF_Default | 78.17 | 73.85 | 76.49 | -2.65 |
-| 0 | High cancellation risk | RF_Default | 92.30 | 78.57 | 103.43 | -24.86 |
-| 1 | Steady regulars | RF_Default | 83.66 | 77.15 | 82.51 | -5.36 |
-| 2 | Volatile mid-range | RF_Default | 73.78 | 69.31 | 78.05 | -8.74 |
+| -2 | Truly sporadic | RF_Default | 82.41 | 79.41 | 90.44 | -11.03 |
+| -1 | Intermittent (Croston) | RF_Default | 77.54 | 70.95 | 73.92 | -2.98 |
+| 0 | High cancellation risk | RF_Default | 102.45 | 80.61 | 100.93 | -20.31 |
+| 1 | Steady regulars | RF_Default | 83.61 | 75.04 | 80.32 | -5.28 |
+| 2 | Volatile mid-range | RF_C2_BEST | 72.76 | 68.15 | 77.87 | -9.72 |
 
 ## Cluster-by-Cluster Notes
 
 ### Cluster -2 - Truly sporadic
 
-- Selected model: `LGBM_Default`
-- Held-out test MAPE: `93.69`
-- Relative result: `LGBM_Default` matched the LGBM baseline.
+- Selected model: `RF_Default`
+- Held-out test MAPE: `79.41`
+- Relative result: `RF_Default` beat the LGBM baseline by 11.03 points.
 
 | Candidate | Valid MAPE | Valid N |
 | --- | --- | --- |
-| LGBM_Default | 83.19 | 1077 |
-| RF_Default | 83.66 | 1077 |
-| AggregateMLP_Disagg | 105.26 | 1077 |
+| RF_Default | 82.41 | 1071 |
+| LGBM_Default | 85.36 | 1071 |
+| AggregateMLP_Disagg | 111.21 | 1071 |
 
 ### Cluster -1 - Intermittent (Croston)
 
 - Selected model: `RF_Default`
-- Held-out test MAPE: `73.85`
-- Relative result: `RF_Default` beat the LGBM baseline by 2.65 points.
+- Held-out test MAPE: `70.95`
+- Relative result: `RF_Default` beat the LGBM baseline by 2.98 points.
 
 | Candidate | Valid MAPE | Valid N |
 | --- | --- | --- |
-| RF_Default | 78.17 | 3240 |
-| LGBM_Default | 82.66 | 3240 |
-| AggregateMLP_Disagg | 337.78 | 3240 |
+| RF_Default | 77.54 | 3223 |
+| LGBM_Default | 83.17 | 3223 |
+| AggregateMLP_Disagg | 433.86 | 3223 |
 
 ### Cluster 0 - High cancellation risk
 
 - Selected model: `RF_Default`
-- Held-out test MAPE: `78.57`
-- Relative result: `RF_Default` beat the LGBM baseline by 24.86 points.
+- Held-out test MAPE: `80.61`
+- Relative result: `RF_Default` beat the LGBM baseline by 20.31 points.
 
 | Candidate | Valid MAPE | Valid N |
 | --- | --- | --- |
-| RF_Default | 92.30 | 325 |
-| LGBM_Tuned | 104.81 | 325 |
-| LGBM_Default | 108.05 | 325 |
-| AggregateMLP_Disagg | 518.83 | 325 |
+| RF_Default | 102.45 | 325 |
+| LGBM_Tuned | 116.73 | 325 |
+| LGBM_Default | 128.42 | 325 |
+| AggregateMLP_Disagg | 449.96 | 325 |
 
 ### Cluster 1 - Steady regulars
 
 - Selected model: `RF_Default`
-- Held-out test MAPE: `77.15`
-- Relative result: `RF_Default` beat the LGBM baseline by 5.36 points.
+- Held-out test MAPE: `75.04`
+- Relative result: `RF_Default` beat the LGBM baseline by 5.28 points.
 
 | Candidate | Valid MAPE | Valid N |
 | --- | --- | --- |
-| RF_Default | 83.66 | 5694 |
-| LGBM_Tuned | 87.55 | 5694 |
-| LGBM_Default | 87.94 | 5694 |
-| AggregateMLP_Disagg | 672.00 | 5694 |
+| RF_Default | 83.61 | 5683 |
+| LGBM_Tuned | 87.04 | 5683 |
+| LGBM_Default | 88.48 | 5683 |
+| AggregateMLP_Disagg | 704.88 | 5683 |
 
 ### Cluster 2 - Volatile mid-range
 
-- Selected model: `RF_Default`
-- Held-out test MAPE: `69.31`
-- Relative result: `RF_Default` beat the LGBM baseline by 8.74 points.
+- Selected model: `RF_C2_BEST`
+- Held-out test MAPE: `68.15`
+- Relative result: `RF_C2_BEST` beat the LGBM baseline by 9.72 points.
 
 | Candidate | Valid MAPE | Valid N |
 | --- | --- | --- |
-| RF_Default | 73.78 | 763 |
-| RF_C2_BEST | 74.00 | 763 |
-| LGBM_Tuned | 79.33 | 763 |
-| LGBM_Default | 80.07 | 763 |
-| AggregateMLP_Disagg | 415.91 | 763 |
+| RF_C2_BEST | 72.76 | 760 |
+| RF_Default | 72.84 | 760 |
+| LGBM_Default | 79.16 | 760 |
+| LGBM_Tuned | 79.26 | 760 |
+| AggregateMLP_Disagg | 442.38 | 760 |
 
 ## Key Takeaways
 

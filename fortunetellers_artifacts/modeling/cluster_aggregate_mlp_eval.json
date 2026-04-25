@@ -2,11 +2,10 @@
   {
     "cluster": -2,
     "label": "Truly sporadic",
-    "candidate": "AggregateMLP_Disagg",
-    "valid_mape": 105.2554354746617,
-    "n_valid": 1077,
-    "test_mape": 225.96321634311025,
-    "n_test": 3010,
+    "valid_mape": 111.20610675962998,
+    "n_valid": 1071,
+    "test_mape": 193.76373748161888,
+    "n_test": 2986,
     "valid_meta": {
       "params": {
         "hidden_layer_sizes": [
@@ -43,11 +42,10 @@
   {
     "cluster": -1,
     "label": "Intermittent (Croston)",
-    "candidate": "AggregateMLP_Disagg",
-    "valid_mape": 337.776574628813,
-    "n_valid": 3240,
-    "test_mape": 164.4130368143994,
-    "n_test": 7906,
+    "valid_mape": 433.8649047474517,
+    "n_valid": 3223,
+    "test_mape": 160.55717420296722,
+    "n_test": 7873,
     "valid_meta": {
       "params": {
         "hidden_layer_sizes": [
@@ -84,11 +82,10 @@
   {
     "cluster": 0,
     "label": "High cancellation risk",
-    "candidate": "AggregateMLP_Disagg",
-    "valid_mape": 518.826178916604,
+    "valid_mape": 449.9612691619273,
     "n_valid": 325,
-    "test_mape": 108.49346254371869,
-    "n_test": 694,
+    "test_mape": 252.19780707248353,
+    "n_test": 693,
     "valid_meta": {
       "params": {
         "hidden_layer_sizes": [
@@ -125,11 +122,10 @@
   {
     "cluster": 1,
     "label": "Steady regulars",
-    "candidate": "AggregateMLP_Disagg",
-    "valid_mape": 672.0043040184024,
-    "n_valid": 5694,
-    "test_mape": 392.8067802630667,
-    "n_test": 11918,
+    "valid_mape": 704.8792672793245,
+    "n_valid": 5683,
+    "test_mape": 309.33074069196175,
+    "n_test": 11898,
     "valid_meta": {
       "params": {
         "hidden_layer_sizes": [
@@ -166,11 +162,10 @@
   {
     "cluster": 2,
     "label": "Volatile mid-range",
-    "candidate": "AggregateMLP_Disagg",
-    "valid_mape": 415.91422018296237,
-    "n_valid": 763,
-    "test_mape": 101.72930585232916,
-    "n_test": 1788,
+    "valid_mape": 442.3802530103446,
+    "n_valid": 760,
+    "test_mape": 109.72727172140083,
+    "n_test": 1783,
     "valid_meta": {
       "params": {
         "hidden_layer_sizes": [

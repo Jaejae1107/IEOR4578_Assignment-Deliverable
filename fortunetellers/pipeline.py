@@ -117,7 +117,7 @@ class ForecastingPipeline:
         cluster_products = self.feat_df_all[self.feat_df_all["cluster"] == cluster_id].index.astype(str).tolist()
         cluster_tx = self.total_retail[self.total_retail["StockCode"].isin(cluster_products)].copy()
 
-        weekly_actuals = make_weekly_actuals(cluster_tx, drop_cancellations=False)
+        weekly_actuals = make_weekly_actuals(cluster_tx, drop_cancellations=True)
         panel = build_spine(cluster_products, self.full_weeks)
         panel = panel.merge(weekly_actuals, on=["StockCode", "week"], how="left")
         panel["sales"] = panel["sales"].fillna(0.0)
@@ -177,7 +177,7 @@ class ForecastingPipeline:
         if country != "ALL":
             cluster_tx = cluster_tx[cluster_tx["Country"] == country].copy()
 
-        weekly_actuals = make_weekly_actuals(cluster_tx, drop_cancellations=False)
+        weekly_actuals = make_weekly_actuals(cluster_tx, drop_cancellations=True)
         panel = build_spine(cluster_products, self.full_weeks)
         panel = panel.merge(weekly_actuals, on=["StockCode", "week"], how="left")
         panel["sales"] = panel["sales"].fillna(0.0)
@@ -215,7 +215,7 @@ class ForecastingPipeline:
 
         future_weeks = pd.period_range(start=self.last_history_week + 1, periods=horizon, freq="W")
         all_weeks = self.full_weeks.append(future_weeks)
-        weekly_actuals = make_weekly_actuals(product_history, drop_cancellations=False)
+        weekly_actuals = make_weekly_actuals(product_history, drop_cancellations=True)
 
         panel = build_spine([product_id], all_weeks)
         panel = panel.merge(weekly_actuals, on=["StockCode", "week"], how="left")
@@ -290,8 +290,9 @@ class ForecastingPipeline:
             future_rows = panel[panel["week"].isin(future_weeks)][["week", "sales"]].copy()
             future_rows["week_start"] = future_rows["week"].apply(lambda p: p.start_time.normalize())
 
+        product_demand = product_filtered[~product_filtered["Invoice"].astype(str).str.startswith("C")].copy()
         weekly_history = (
-            product_filtered.assign(Week=product_filtered["InvoiceDate"].dt.to_period("W"))
+            product_demand.assign(Week=product_demand["InvoiceDate"].dt.to_period("W"))
             .groupby("Week")["Sales"]
             .sum()
             .reset_index()
@@ -333,8 +334,8 @@ class ForecastingPipeline:
             "weeks_with_sales": weeks_with_sales,
             "total_weeks": int(len(weekly_history)),
             "pct_zero_weeks": round(pct_zero_weeks * 100, 2),
-            "total_transactions": int(len(product_filtered)),
-            "unique_customers": int(product_filtered["CustomerID"].nunique()),
+            "total_transactions": int(len(product_demand)),
+            "unique_customers": int(product_demand["CustomerID"].nunique()),
         }
 
         return ForecastOutput(

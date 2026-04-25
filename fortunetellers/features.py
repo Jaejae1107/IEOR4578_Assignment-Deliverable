@@ -291,7 +291,7 @@ def build_or_load_feature_artifacts(
     return build_feature_artifacts(dataset.retail_train, paths)
 
 
-def make_weekly_actuals(transactions: pd.DataFrame, drop_cancellations: bool = False) -> pd.DataFrame:
+def make_weekly_actuals(transactions: pd.DataFrame, drop_cancellations: bool = True) -> pd.DataFrame:
     df = transactions.copy()
     if drop_cancellations and "Invoice" in df.columns:
         df = df[~df["Invoice"].astype(str).str.startswith("C")].copy()
@@ -405,7 +405,8 @@ def build_cluster_panels(
 
         label = feat_df_all.loc[feat_df_all["cluster"] == cluster_id, "cluster_label"].iloc[0]
         cluster_tx = full_transactions[full_transactions["StockCode"].isin(cluster_products)].copy()
-        weekly_actuals = make_weekly_actuals(cluster_tx, drop_cancellations=False)
+        # Forecast the gross demand signal and keep cancellations only as auxiliary features.
+        weekly_actuals = make_weekly_actuals(cluster_tx, drop_cancellations=True)
 
         panel = build_spine(cluster_products, dataset.all_weeks)
         panel = panel.merge(weekly_actuals, on=["StockCode", "week"], how="left")
