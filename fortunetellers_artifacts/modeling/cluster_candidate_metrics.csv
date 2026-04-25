@@ -1,13 +1,9 @@
 cluster,label,candidate,valid_mape,n_valid,meta
 -2,Truly sporadic,LGBM_Default,83.18977387052044,1077,{}
 -2,Truly sporadic,RF_Default,83.65505234466286,1077,{}
--2,Truly sporadic,CrostonSBA,91.68891757012914,1077,{}
 -1,Intermittent (Croston),RF_Default,78.16621436325369,3240,{}
 -1,Intermittent (Croston),LGBM_Default,82.65646088768752,3240,{}
--1,Intermittent (Croston),TwoStageRawLag,87.93360455714367,3240,"{""inner_name"": ""TwoStageRawLag""}"
--1,Intermittent (Croston),CrostonSBA,111.68620267370906,3240,{}
-0,High cancellation risk,RF_Default,92.2976853527321,325,{}
-0,High cancellation risk,ResidualCorrectionRollingCV,104.73873157397031,325,"{""alpha"": 1.0}"
+0,High cancellation risk,RF_Default,92.29768535273212,325,{}
 0,High cancellation risk,LGBM_Tuned,104.81363904159207,325,"{""params"": {""n_estimators"": 1100, ""learning_rate"": 0.02, ""num_leaves"": 95, ""min_child_samples"": 60, ""subsample"": 0.85, ""colsample_bytree"": 0.85, ""reg_alpha"": 0.2, ""reg_lambda"": 0.4}}"
 0,High cancellation risk,LGBM_Default,108.04692800549887,325,{}
 1,Steady regulars,RF_Default,83.65914824326988,5694,{}

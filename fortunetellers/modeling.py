@@ -483,18 +483,15 @@ def two_stage_rawlag_predict(
     return p_sale * amount_pred, "TwoStageRawLag"
 
 
-def _candidate_methods_for_cluster(cluster_id: int, high_cancel_cluster_id: int | None) -> list[str]:
-    if cluster_id == -2:
-        return ["CrostonSBA", "RF_Default", "LGBM_Default"]
-    if cluster_id == -1:
-        return ["TwoStageRawLag", "CrostonSBA", "RF_Default", "LGBM_Default"]
+def _candidate_methods_for_cluster(cluster_id: int) -> list[str]:
+    # Keep model selection strictly at the cluster level.
+    # We intentionally exclude per-SKU baselines and multi-stage hybrids here
+    # so every candidate corresponds to one pooled model fit per cluster.
+    if cluster_id in {-2, -1}:
+        return ["RF_Default", "LGBM_Default"]
     if cluster_id == 2:
         return ["RF_C2_BEST", "RF_Default", "LGBM_Tuned", "LGBM_Default"]
-
-    methods = ["LGBM_Tuned", "RF_Default", "LGBM_Default"]
-    if high_cancel_cluster_id is not None and cluster_id == high_cancel_cluster_id:
-        methods.insert(1, "ResidualCorrectionRollingCV")
-    return methods
+    return ["LGBM_Tuned", "RF_Default", "LGBM_Default"]
 
 
 def train_cluster_models(
@@ -505,12 +502,6 @@ def train_cluster_models(
 ) -> ModelingArtifacts:
     paths.ensure_dirs()
 
-    active_ids = [cid for cid in panels if cid >= 0 and "cancel_rate" in panels[cid]["train"].columns]
-    high_cancel_cluster_id = None
-    if active_ids:
-        high_cancel_cluster_id = max(active_ids, key=lambda cid: float(panels[cid]["train"]["cancel_rate"].median()))
-
-    raw_cache: dict[int, tuple[pd.DataFrame, list[str]]] = {}
     selection_rows: list[dict[str, Any]] = []
     candidate_rows: list[dict[str, Any]] = []
     tuned_trial_rows: list[dict[str, Any]] = []
@@ -536,14 +527,14 @@ def train_cluster_models(
         best_valid_mape = np.inf
         best_valid_meta: dict[str, Any] = {}
 
-        for method in _candidate_methods_for_cluster(cluster_id, high_cancel_cluster_id):
+        for method in _candidate_methods_for_cluster(cluster_id):
             try:
                 if method == "CrostonSBA":
                     y_valid_pred = croston_predict_by_sku(train_df, valid_df)
                     meta = {}
                 elif method == "TwoStageRawLag":
-                    raw_cache.setdefault(cluster_id, build_raw_lag_cache_for_cluster(cluster_id, feat_df_all, dataset))
-                    y_valid_pred, inner_name = two_stage_rawlag_predict(cluster_id, train_df, valid_df, feat_cols, raw_cache[cluster_id])
+                    raw_cache = build_raw_lag_cache_for_cluster(cluster_id, feat_df_all, dataset)
+                    y_valid_pred, inner_name = two_stage_rawlag_predict(cluster_id, train_df, valid_df, feat_cols, raw_cache)
                     meta = {"inner_name": inner_name}
                 elif method == "LGBM_Default":
                     model = fit_signedlog_model_with_params(train_df, feat_cols, DEFAULT_LGBM_PARAMS)
@@ -596,8 +587,8 @@ def train_cluster_models(
             y_test_pred = croston_predict_by_sku(train_plus_valid, test_df)
             test_meta = {}
         elif best_method == "TwoStageRawLag":
-            raw_cache.setdefault(cluster_id, build_raw_lag_cache_for_cluster(cluster_id, feat_df_all, dataset))
-            y_test_pred, inner_name = two_stage_rawlag_predict(cluster_id, train_plus_valid, test_df, feat_cols, raw_cache[cluster_id])
+            raw_cache = build_raw_lag_cache_for_cluster(cluster_id, feat_df_all, dataset)
+            y_test_pred, inner_name = two_stage_rawlag_predict(cluster_id, train_plus_valid, test_df, feat_cols, raw_cache)
             test_meta = {"inner_name": inner_name}
         elif best_method == "LGBM_Default":
             model = fit_signedlog_model_with_params(train_plus_valid, feat_cols, DEFAULT_LGBM_PARAMS)

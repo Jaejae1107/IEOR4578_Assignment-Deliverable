@@ -24,7 +24,6 @@ This report summarizes the selected model for each demand cluster and the strong
 | --- | --- | --- |
 | LGBM_Default | 83.19 | 1077 |
 | RF_Default | 83.66 | 1077 |
-| CrostonSBA | 91.69 | 1077 |
 
 ### Cluster -1 - Intermittent (Croston)
 
@@ -36,8 +35,6 @@ This report summarizes the selected model for each demand cluster and the strong
 | --- | --- | --- |
 | RF_Default | 78.17 | 3240 |
 | LGBM_Default | 82.66 | 3240 |
-| TwoStageRawLag | 87.93 | 3240 |
-| CrostonSBA | 111.69 | 3240 |
 
 ### Cluster 0 - High cancellation risk
 
@@ -48,7 +45,6 @@ This report summarizes the selected model for each demand cluster and the strong
 | Candidate | Valid MAPE | Valid N |
 | --- | --- | --- |
 | RF_Default | 92.30 | 325 |
-| ResidualCorrectionRollingCV | 104.74 | 325 |
 | LGBM_Tuned | 104.81 | 325 |
 | LGBM_Default | 108.05 | 325 |
 
