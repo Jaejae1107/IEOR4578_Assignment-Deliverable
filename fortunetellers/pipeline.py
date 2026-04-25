@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 
-from .config import BEST_C2_RF_PARAMS, DEFAULT_LGBM_PARAMS, PRODUCT_FEATURE_COLS, ProjectPaths
+from .config import BEST_C2_RF_PARAMS, DEFAULT_AGGREGATE_MLP_PARAMS, DEFAULT_LGBM_PARAMS, PRODUCT_FEATURE_COLS, ProjectPaths
 from .data import DatasetBundle, load_or_prepare_transactions
 from .features import (
     add_calendar_features,
@@ -21,9 +21,11 @@ from .features import (
 )
 from .modeling import (
     LGBMRegressor,
+    compute_recent_sku_weights,
     croston_predict_by_sku,
     fit_signedlog_model_with_params,
     predict_signedlog_model,
+    recursive_aggregate_mlp_forecast,
     signed_expm1,
     signed_log1p,
 )
@@ -159,6 +161,8 @@ class ForecastingPipeline:
         elif selected_model in {"LGBM_Default", "LGBM_Tuned"}:
             effective_params = params or DEFAULT_LGBM_PARAMS
             model = fit_signedlog_model_with_params(train_panel, feature_cols, effective_params)
+        elif selected_model == "AggregateMLP_Disagg":
+            model = None
         elif selected_model == "CrostonSBA":
             model = None
         else:
@@ -166,6 +170,39 @@ class ForecastingPipeline:
 
         self._cluster_model_cache[cluster_id] = (selected_model, model, feature_cols, params)
         return self._cluster_model_cache[cluster_id]
+
+    def _build_cluster_history_panel(self, cluster_id: int, country: str) -> pd.DataFrame:
+        cluster_products = self.feat_df_all[self.feat_df_all["cluster"] == cluster_id].index.astype(str).tolist()
+        cluster_tx = self.total_retail[self.total_retail["StockCode"].isin(cluster_products)].copy()
+        if country != "ALL":
+            cluster_tx = cluster_tx[cluster_tx["Country"] == country].copy()
+
+        weekly_actuals = make_weekly_actuals(cluster_tx, drop_cancellations=False)
+        panel = build_spine(cluster_products, self.full_weeks)
+        panel = panel.merge(weekly_actuals, on=["StockCode", "week"], how="left")
+        panel["sales"] = panel["sales"].fillna(0.0)
+        return panel[["StockCode", "week", "sales"]].copy()
+
+    def _forecast_with_aggregate_disagg(
+        self,
+        cluster_id: int,
+        product_id: str,
+        country: str,
+        horizon: int,
+        params: dict[str, Any],
+    ) -> pd.DataFrame:
+        cluster_history = self._build_cluster_history_panel(cluster_id, country)
+        effective_params = params or DEFAULT_AGGREGATE_MLP_PARAMS
+        aggregate_forecast = recursive_aggregate_mlp_forecast(cluster_history, horizon, effective_params)
+        sku_weights = compute_recent_sku_weights(cluster_history)
+        product_weight = float(sku_weights.get(product_id, 0.0))
+        if product_weight <= 0.0:
+            product_weight = 1.0 / max(1, cluster_history["StockCode"].nunique())
+
+        aggregate_forecast = aggregate_forecast.copy()
+        aggregate_forecast["sales"] = aggregate_forecast["aggregate_pred"] * product_weight
+        aggregate_forecast["week_start"] = aggregate_forecast["week"].apply(lambda p: p.start_time.normalize())
+        return aggregate_forecast[["week", "week_start", "sales"]].copy()
 
     def _build_product_history_panel(self, product_id: str, country: str, horizon: int) -> pd.DataFrame:
         product_all = self.total_retail[self.total_retail["StockCode"] == product_id].copy()
@@ -214,7 +251,9 @@ class ForecastingPipeline:
 
         assigned_cluster = int(self.feat_df_all.loc[product_id, "cluster"])
         cluster_label = str(self.feat_df_all.loc[product_id, "cluster_label"])
-        selected_model, model, feature_cols, _params = self._train_cluster_model(assigned_cluster)
+        cluster_config = self._get_cluster_config(assigned_cluster)
+        selected_model = str(cluster_config["selected_model"])
+        selected_params = dict(cluster_config.get("params", {}))
         cluster_row = self.selection_df[self.selection_df["cluster"] == assigned_cluster].iloc[0]
 
         product_all = self.total_retail[self.total_retail["StockCode"] == product_id].copy()
@@ -228,15 +267,28 @@ class ForecastingPipeline:
                 f"No sales data for product {product_id} in {country}. Available countries: {', '.join(available_countries[:10])}"
             )
 
-        panel = self._build_product_history_panel(product_id, country, horizon)
         future_weeks = pd.period_range(start=self.last_history_week + 1, periods=horizon, freq="W")
+        if selected_model == "AggregateMLP_Disagg":
+            future_rows = self._forecast_with_aggregate_disagg(
+                assigned_cluster,
+                product_id,
+                country,
+                horizon,
+                selected_params,
+            )
+        else:
+            selected_model, model, feature_cols, _params = self._train_cluster_model(assigned_cluster)
+            panel = self._build_product_history_panel(product_id, country, horizon)
 
-        for future_week in future_weeks:
-            panel = add_lag_features(panel)
-            row_mask = panel["week"] == future_week
-            row = panel.loc[row_mask].copy()
-            pred = self._predict_row(selected_model, model, row, feature_cols, panel)
-            panel.loc[row_mask, "sales"] = pred
+            for future_week in future_weeks:
+                panel = add_lag_features(panel)
+                row_mask = panel["week"] == future_week
+                row = panel.loc[row_mask].copy()
+                pred = self._predict_row(selected_model, model, row, feature_cols, panel)
+                panel.loc[row_mask, "sales"] = pred
+
+            future_rows = panel[panel["week"].isin(future_weeks)][["week", "sales"]].copy()
+            future_rows["week_start"] = future_rows["week"].apply(lambda p: p.start_time.normalize())
 
         weekly_history = (
             product_filtered.assign(Week=product_filtered["InvoiceDate"].dt.to_period("W"))
@@ -255,8 +307,6 @@ class ForecastingPipeline:
         recent_history = weekly_history.tail(12).copy()
         recent_avg = float(recent_history["sales"].mean()) if len(recent_history) else 0.0
 
-        future_rows = panel[panel["week"].isin(future_weeks)][["week", "sales"]].copy()
-        future_rows["week_start"] = future_rows["week"].apply(lambda p: p.start_time.normalize())
         forecast_records = [
             {
                 "week": str(row["week"]),

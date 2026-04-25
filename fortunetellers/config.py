@@ -44,6 +44,15 @@ DEFAULT_LGBM_PARAMS = {
     "reg_lambda": 0.5,
 }
 
+DEFAULT_AGGREGATE_MLP_PARAMS = {
+    "hidden_layer_sizes": (16, 8),
+    "activation": "tanh",
+    "solver": "lbfgs",
+    "alpha": 0.01,
+    "max_iter": 1000,
+    "random_state": 42,
+}
+
 LGBM_PARAM_GRID = [
     {
         "n_estimators": 500,
@@ -168,6 +177,8 @@ PRODUCT_FEATURE_COLS = [
 
 LAG_WINDOWS = [1, 2, 4, 8, 13, 26, 52]
 ROLL_WINDOWS = [4, 8, 13, 26]
+AGGREGATE_LAG_WINDOWS = [1, 2, 4, 8, 13, 26]
+AGGREGATE_ROLL_WINDOWS = [4, 8, 13]
 SPORADIC_THRESHOLD = 0.85
 CROSTON_THRESHOLD = 0.50
 CROSTON_ALPHA = 0.10

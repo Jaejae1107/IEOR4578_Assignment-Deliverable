@@ -1,0 +1,207 @@
+[
+  {
+    "cluster": -2,
+    "label": "Truly sporadic",
+    "candidate": "AggregateMLP_Disagg",
+    "valid_mape": 105.2554354746617,
+    "n_valid": 1077,
+    "test_mape": 225.96321634311025,
+    "n_test": 3010,
+    "valid_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 10,
+      "n_aggregate_pred_weeks": 6,
+      "n_skus": 1384
+    },
+    "test_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 16,
+      "n_aggregate_pred_weeks": 12,
+      "n_skus": 1384
+    }
+  },
+  {
+    "cluster": -1,
+    "label": "Intermittent (Croston)",
+    "candidate": "AggregateMLP_Disagg",
+    "valid_mape": 337.776574628813,
+    "n_valid": 3240,
+    "test_mape": 164.4130368143994,
+    "n_test": 7906,
+    "valid_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 10,
+      "n_aggregate_pred_weeks": 6,
+      "n_skus": 1711
+    },
+    "test_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 16,
+      "n_aggregate_pred_weeks": 12,
+      "n_skus": 1711
+    }
+  },
+  {
+    "cluster": 0,
+    "label": "High cancellation risk",
+    "candidate": "AggregateMLP_Disagg",
+    "valid_mape": 518.826178916604,
+    "n_valid": 325,
+    "test_mape": 108.49346254371869,
+    "n_test": 694,
+    "valid_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 10,
+      "n_aggregate_pred_weeks": 6,
+      "n_skus": 82
+    },
+    "test_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 16,
+      "n_aggregate_pred_weeks": 12,
+      "n_skus": 82
+    }
+  },
+  {
+    "cluster": 1,
+    "label": "Steady regulars",
+    "candidate": "AggregateMLP_Disagg",
+    "valid_mape": 672.0043040184024,
+    "n_valid": 5694,
+    "test_mape": 392.8067802630667,
+    "n_test": 11918,
+    "valid_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 10,
+      "n_aggregate_pred_weeks": 6,
+      "n_skus": 1294
+    },
+    "test_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 16,
+      "n_aggregate_pred_weeks": 12,
+      "n_skus": 1294
+    }
+  },
+  {
+    "cluster": 2,
+    "label": "Volatile mid-range",
+    "candidate": "AggregateMLP_Disagg",
+    "valid_mape": 415.91422018296237,
+    "n_valid": 763,
+    "test_mape": 101.72930585232916,
+    "n_test": 1788,
+    "valid_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 10,
+      "n_aggregate_pred_weeks": 6,
+      "n_skus": 218
+    },
+    "test_meta": {
+      "params": {
+        "hidden_layer_sizes": [
+          16,
+          8
+        ],
+        "activation": "tanh",
+        "solver": "lbfgs",
+        "alpha": 0.01,
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "n_aggregate_train_weeks": 16,
+      "n_aggregate_pred_weeks": 12,
+      "n_skus": 218
+    }
+  }
+]

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import warnings
 from dataclasses import dataclass
 from itertools import product as iterproduct
 from typing import Any
@@ -8,6 +9,10 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor, RandomForestRegressor
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.neural_network import MLPRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 try:
     from lightgbm import LGBMClassifier, LGBMRegressor
@@ -59,16 +64,21 @@ except (ImportError, OSError):  # pragma: no cover
             return self.model.predict_proba(X)
 
 from .config import (
+    AGGREGATE_LAG_WINDOWS,
+    AGGREGATE_ROLL_WINDOWS,
     BASELINE_RF_PARAMS,
     BEST_C2_RF_PARAMS,
     CROSTON_ALPHA,
+    DEFAULT_AGGREGATE_MLP_PARAMS,
     DEFAULT_LGBM_PARAMS,
     LGBM_PARAM_GRID,
+    LAG_WINDOWS,
     MIN_ABS_ACTUAL,
     ProjectPaths,
+    ROLL_WINDOWS,
 )
 from .data import DatasetBundle
-from .features import make_weekly_actuals
+from .features import add_calendar_features, make_weekly_actuals
 
 
 @dataclass
@@ -384,6 +394,183 @@ def _pred_rf_signedlog(train_df: pd.DataFrame, pred_df: pd.DataFrame, feat_cols:
     return np.clip(signed_expm1(model.predict(pred_df[feat_cols].fillna(0.0))), 0.0, None)
 
 
+def _normalize_aggregate_mlp_params(params: dict[str, Any] | None = None) -> dict[str, Any]:
+    effective = dict(DEFAULT_AGGREGATE_MLP_PARAMS)
+    if params:
+        effective.update(params)
+    hidden_layers = effective.get("hidden_layer_sizes")
+    if hidden_layers is not None:
+        effective["hidden_layer_sizes"] = tuple(int(v) for v in hidden_layers)
+    return effective
+
+
+def build_cluster_aggregate_panel(rows: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
+    agg = (
+        rows.groupby("week", as_index=False)
+        .agg(sales=("sales", lambda s: float(s.sum(min_count=1)) if len(s) else np.nan))
+        .sort_values("week")
+        .reset_index(drop=True)
+    )
+    agg["week_start"] = agg["week"].apply(lambda p: p.start_time.normalize())
+    agg = add_calendar_features(agg, date_col="week_start")
+
+    series = agg["sales"]
+    for lag in AGGREGATE_LAG_WINDOWS:
+        agg[f"cluster_lag_{lag}w"] = series.shift(lag)
+
+    for window in AGGREGATE_ROLL_WINDOWS:
+        agg[f"cluster_roll_mean_{window}w"] = series.shift(1).rolling(window, min_periods=1).mean()
+
+    agg["cluster_short_trend"] = (
+        series.shift(1).rolling(4, min_periods=1).mean()
+        - series.shift(5).rolling(4, min_periods=1).mean()
+    )
+
+    feature_cols = [col for col in agg.columns if col not in {"week", "week_start", "sales"}]
+    return agg, feature_cols
+
+
+def fit_aggregate_mlp_model(train_df: pd.DataFrame, feat_cols: list[str], params: dict[str, Any] | None = None) -> Pipeline:
+    model = Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            ("mlp", MLPRegressor(**_normalize_aggregate_mlp_params(params))),
+        ]
+    )
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
+        warnings.filterwarnings("ignore", category=ConvergenceWarning)
+        model.fit(train_df[feat_cols].fillna(0.0), signed_log1p(train_df["sales"].values))
+    return model
+
+
+def predict_aggregate_mlp(model: Pipeline, df: pd.DataFrame, feat_cols: list[str]) -> np.ndarray:
+    if df.empty:
+        return np.array([], dtype=float)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
+        pred = model.predict(df[feat_cols].fillna(0.0))
+    return np.clip(signed_expm1(pred), 0.0, None)
+
+
+def compute_recent_sku_weights(train_df: pd.DataFrame, window: int = 13) -> dict[str, float]:
+    weeks = np.array(sorted(train_df["week"].unique()))
+    if weeks.size == 0:
+        return {}
+
+    recent_weeks = set(weeks[-min(window, len(weeks)) :])
+    recent = train_df[train_df["week"].isin(recent_weeks)].copy()
+    recent["weight_sales"] = recent["sales"].clip(lower=0.0)
+    sku_weights = recent.groupby("StockCode")["weight_sales"].sum()
+
+    if float(sku_weights.sum()) <= 0.0:
+        fallback = train_df.copy()
+        fallback["weight_sales"] = fallback["sales"].clip(lower=0.0)
+        sku_weights = fallback.groupby("StockCode")["weight_sales"].sum()
+
+    if float(sku_weights.sum()) <= 0.0:
+        sku_weights = train_df.groupby("StockCode").size().astype(float)
+
+    total = float(sku_weights.sum())
+    if total <= 0.0:
+        return {}
+    return {str(stock_code): float(weight / total) for stock_code, weight in sku_weights.items()}
+
+
+def disaggregate_cluster_forecast(
+    pred_df: pd.DataFrame,
+    aggregate_pred_df: pd.DataFrame,
+    sku_weights: dict[str, float],
+) -> np.ndarray:
+    out = pred_df[["StockCode", "week"]].copy().reset_index()
+    out = out.merge(aggregate_pred_df, on="week", how="left")
+    unique_skus = out["StockCode"].astype(str).drop_duplicates()
+    default_weight = 1.0 / max(1, len(unique_skus))
+    out["sku_weight"] = out["StockCode"].astype(str).map(sku_weights).fillna(default_weight)
+
+    dedup = out[["StockCode", "sku_weight"]].drop_duplicates()
+    weight_sum = float(dedup["sku_weight"].sum())
+    if weight_sum > 0.0:
+        out["sku_weight"] = out["sku_weight"] / weight_sum
+    else:
+        out["sku_weight"] = default_weight
+
+    out["pred"] = out["aggregate_pred"].fillna(0.0) * out["sku_weight"]
+    return out.sort_values("index")["pred"].to_numpy()
+
+
+def aggregate_mlp_disagg_predict(
+    train_df: pd.DataFrame,
+    pred_df: pd.DataFrame,
+    params: dict[str, Any] | None = None,
+) -> tuple[np.ndarray, dict[str, Any]]:
+    full_rows = pd.concat(
+        [
+            train_df[["StockCode", "week", "sales"]],
+            pred_df[["StockCode", "week", "sales"]],
+        ],
+        ignore_index=True,
+    )
+    aggregate_panel, aggregate_feat_cols = build_cluster_aggregate_panel(full_rows)
+    required_lag = f"cluster_lag_{max(AGGREGATE_LAG_WINDOWS)}w"
+
+    train_weeks = set(train_df["week"].unique())
+    pred_weeks = set(pred_df["week"].unique())
+    aggregate_train = aggregate_panel[aggregate_panel["week"].isin(train_weeks)].dropna(subset=[required_lag]).copy()
+    aggregate_pred = aggregate_panel[aggregate_panel["week"].isin(pred_weeks)].dropna(subset=[required_lag]).copy()
+
+    if aggregate_train.empty or aggregate_pred.empty:
+        raise ValueError("Aggregate MLP panel does not have enough lagged history to score this split.")
+
+    model = fit_aggregate_mlp_model(aggregate_train, aggregate_feat_cols, params=params)
+    aggregate_pred_values = predict_aggregate_mlp(model, aggregate_pred, aggregate_feat_cols)
+    aggregate_pred_df = aggregate_pred[["week"]].copy()
+    aggregate_pred_df["aggregate_pred"] = aggregate_pred_values
+
+    sku_weights = compute_recent_sku_weights(train_df)
+    disagg_pred = disaggregate_cluster_forecast(pred_df, aggregate_pred_df, sku_weights)
+    meta = {
+        "params": _normalize_aggregate_mlp_params(params),
+        "n_aggregate_train_weeks": int(len(aggregate_train)),
+        "n_aggregate_pred_weeks": int(len(aggregate_pred)),
+        "n_skus": int(train_df["StockCode"].nunique()),
+    }
+    return disagg_pred, meta
+
+
+def recursive_aggregate_mlp_forecast(
+    history_df: pd.DataFrame,
+    horizon: int,
+    params: dict[str, Any] | None = None,
+) -> pd.DataFrame:
+    aggregate_history, aggregate_feat_cols = build_cluster_aggregate_panel(history_df)
+    required_lag = f"cluster_lag_{max(AGGREGATE_LAG_WINDOWS)}w"
+    aggregate_train = aggregate_history.dropna(subset=[required_lag]).copy()
+    if aggregate_train.empty:
+        raise ValueError("Aggregate MLP forecast needs more history before it can fit.")
+
+    model = fit_aggregate_mlp_model(aggregate_train, aggregate_feat_cols, params=params)
+    future_weeks = pd.period_range(start=aggregate_history["week"].max() + 1, periods=horizon, freq="W")
+    working = pd.concat(
+        [
+            aggregate_history[["week", "sales"]],
+            pd.DataFrame({"week": future_weeks, "sales": np.nan}),
+        ],
+        ignore_index=True,
+    )
+
+    for future_week in future_weeks:
+        panel, feat_cols = build_cluster_aggregate_panel(working)
+        future_row = panel[panel["week"] == future_week].copy()
+        pred = predict_aggregate_mlp(model, future_row, feat_cols)[0]
+        working.loc[working["week"] == future_week, "sales"] = pred
+
+    final_panel, _ = build_cluster_aggregate_panel(working)
+    future_panel = final_panel[final_panel["week"].isin(future_weeks)][["week", "sales"]].copy()
+    future_panel = future_panel.rename(columns={"sales": "aggregate_pred"}).reset_index(drop=True)
+    return future_panel
+
+
 def build_raw_lag_cache_for_cluster(
     cluster_id: int,
     feat_df_all: pd.DataFrame,
@@ -488,10 +675,10 @@ def _candidate_methods_for_cluster(cluster_id: int) -> list[str]:
     # We intentionally exclude per-SKU baselines and multi-stage hybrids here
     # so every candidate corresponds to one pooled model fit per cluster.
     if cluster_id in {-2, -1}:
-        return ["RF_Default", "LGBM_Default"]
+        return ["AggregateMLP_Disagg", "RF_Default", "LGBM_Default"]
     if cluster_id == 2:
-        return ["RF_C2_BEST", "RF_Default", "LGBM_Tuned", "LGBM_Default"]
-    return ["LGBM_Tuned", "RF_Default", "LGBM_Default"]
+        return ["RF_C2_BEST", "RF_Default", "AggregateMLP_Disagg", "LGBM_Tuned", "LGBM_Default"]
+    return ["RF_Default", "AggregateMLP_Disagg", "LGBM_Tuned", "LGBM_Default"]
 
 
 def train_cluster_models(
@@ -550,6 +737,8 @@ def train_cluster_models(
                 elif method == "RF_C2_BEST":
                     y_valid_pred = _pred_rf_signedlog(train_df, valid_df, feat_cols, BEST_C2_RF_PARAMS)
                     meta = {}
+                elif method == "AggregateMLP_Disagg":
+                    y_valid_pred, meta = aggregate_mlp_disagg_predict(train_df, valid_df, DEFAULT_AGGREGATE_MLP_PARAMS)
                 elif method == "ResidualCorrectionRollingCV":
                     y_valid_pred, alpha = residual_correction_predict_rolling(train_df, valid_df, feat_cols, tuned_params)
                     meta = {"alpha": alpha}
@@ -604,6 +793,8 @@ def train_cluster_models(
         elif best_method == "RF_C2_BEST":
             y_test_pred = _pred_rf_signedlog(train_plus_valid, test_df, feat_cols, BEST_C2_RF_PARAMS)
             test_meta = {}
+        elif best_method == "AggregateMLP_Disagg":
+            y_test_pred, test_meta = aggregate_mlp_disagg_predict(train_plus_valid, test_df, DEFAULT_AGGREGATE_MLP_PARAMS)
         elif best_method == "ResidualCorrectionRollingCV":
             y_test_pred, alpha = residual_correction_predict_rolling(train_plus_valid, test_df, feat_cols, tuned_params)
             test_meta = {"alpha": alpha}
@@ -660,6 +851,8 @@ def train_cluster_models(
             params = dict(tuned_params_by_cluster.get(cid, DEFAULT_LGBM_PARAMS))
         elif model_name == "LGBM_Default":
             params = dict(DEFAULT_LGBM_PARAMS)
+        elif model_name == "AggregateMLP_Disagg":
+            params = dict(_normalize_aggregate_mlp_params(DEFAULT_AGGREGATE_MLP_PARAMS))
         elif model_name == "CrostonSBA":
             params = {"alpha": CROSTON_ALPHA}
         elif model_name == "ResidualCorrectionRollingCV":
@@ -690,6 +883,7 @@ def train_cluster_models(
             "BASELINE_RF_PARAMS": BASELINE_RF_PARAMS,
             "BEST_C2_RF_PARAMS": BEST_C2_RF_PARAMS,
             "DEFAULT_LGBM_PARAMS": DEFAULT_LGBM_PARAMS,
+            "DEFAULT_AGGREGATE_MLP_PARAMS": _normalize_aggregate_mlp_params(DEFAULT_AGGREGATE_MLP_PARAMS),
             "CROSTON_ALPHA": CROSTON_ALPHA,
         },
         "cluster_configs": cluster_configs,

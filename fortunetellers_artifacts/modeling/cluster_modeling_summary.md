@@ -24,6 +24,7 @@ This report summarizes the selected model for each demand cluster and the strong
 | --- | --- | --- |
 | LGBM_Default | 83.19 | 1077 |
 | RF_Default | 83.66 | 1077 |
+| AggregateMLP_Disagg | 105.26 | 1077 |
 
 ### Cluster -1 - Intermittent (Croston)
 
@@ -35,6 +36,7 @@ This report summarizes the selected model for each demand cluster and the strong
 | --- | --- | --- |
 | RF_Default | 78.17 | 3240 |
 | LGBM_Default | 82.66 | 3240 |
+| AggregateMLP_Disagg | 337.78 | 3240 |
 
 ### Cluster 0 - High cancellation risk
 
@@ -47,6 +49,7 @@ This report summarizes the selected model for each demand cluster and the strong
 | RF_Default | 92.30 | 325 |
 | LGBM_Tuned | 104.81 | 325 |
 | LGBM_Default | 108.05 | 325 |
+| AggregateMLP_Disagg | 518.83 | 325 |
 
 ### Cluster 1 - Steady regulars
 
@@ -59,6 +62,7 @@ This report summarizes the selected model for each demand cluster and the strong
 | RF_Default | 83.66 | 5694 |
 | LGBM_Tuned | 87.55 | 5694 |
 | LGBM_Default | 87.94 | 5694 |
+| AggregateMLP_Disagg | 672.00 | 5694 |
 
 ### Cluster 2 - Volatile mid-range
 
@@ -72,6 +76,7 @@ This report summarizes the selected model for each demand cluster and the strong
 | RF_C2_BEST | 74.00 | 763 |
 | LGBM_Tuned | 79.33 | 763 |
 | LGBM_Default | 80.07 | 763 |
+| AggregateMLP_Disagg | 415.91 | 763 |
 
 ## Key Takeaways
 
