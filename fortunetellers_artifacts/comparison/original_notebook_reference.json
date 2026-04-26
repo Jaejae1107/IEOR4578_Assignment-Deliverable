@@ -1,0 +1,62 @@
+[
+  {
+    "cluster": -2,
+    "label": "Truly sporadic",
+    "cluster_count": 1328,
+    "selected_model": "RF_Default",
+    "valid_mape_selected": 78.6146,
+    "test_mape_selected": 89.0379,
+    "test_mape_lgbm_baseline": 87.1572,
+    "n_train": 34528,
+    "n_valid": 5312,
+    "n_test": 15936
+  },
+  {
+    "cluster": -1,
+    "label": "Intermittent (Croston)",
+    "cluster_count": 1627,
+    "selected_model": "RF_Default",
+    "valid_mape_selected": 86.9088,
+    "test_mape_selected": 76.3429,
+    "test_mape_lgbm_baseline": 78.7736,
+    "n_train": 42302,
+    "n_valid": 6508,
+    "n_test": 19524
+  },
+  {
+    "cluster": 0,
+    "label": "High cancellation risk",
+    "cluster_count": 92,
+    "selected_model": "RF_Default",
+    "valid_mape_selected": 76.5318,
+    "test_mape_selected": 82.8887,
+    "test_mape_lgbm_baseline": 102.1911,
+    "n_train": 2392,
+    "n_valid": 368,
+    "n_test": 1104
+  },
+  {
+    "cluster": 1,
+    "label": "Volatile mid-range",
+    "cluster_count": 228,
+    "selected_model": "RF_Default",
+    "valid_mape_selected": 79.1589,
+    "test_mape_selected": 75.0641,
+    "test_mape_lgbm_baseline": 80.4716,
+    "n_train": 5928,
+    "n_valid": 912,
+    "n_test": 2736
+  },
+  {
+    "cluster": 2,
+    "label": "Steady regulars",
+    "cluster_count": 1281,
+    "selected_model": "RF_C2_BEST",
+    "valid_mape_selected": 84.1653,
+    "test_mape_selected": 81.3974,
+    "test_mape_lgbm_baseline": 122.6299,
+    "n_train": 33306,
+    "n_valid": 5124,
+    "n_test": 15372
+  }
+]

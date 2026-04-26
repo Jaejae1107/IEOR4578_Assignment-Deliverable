@@ -5,7 +5,7 @@
   "cluster": 2,
   "cluster_label": "Steady regulars",
   "selected_model": "RF_C2_BEST",
-  "test_mape_selected": 68.14608672399801,
+  "test_mape_selected": 74.71761146677433,
   "warning_flag": "normal",
   "recommendation": "Automation-ready; use forecast for replenishment planning.",
   "statistics": {

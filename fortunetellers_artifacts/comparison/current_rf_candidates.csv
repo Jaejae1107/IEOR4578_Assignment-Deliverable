@@ -1,0 +1,7 @@
+cluster,label,candidate,valid_mape,n_valid_used
+-2,Truly sporadic,RF_Default,81.50972383479312,1458
+-1,Intermittent (Croston),RF_Default,79.91841938161569,2831
+0,High cancellation risk,RF_Default,92.88329800605212,336
+1,Volatile mid-range,RF_Default,78.72424609573174,777
+2,Steady regulars,RF_C2_BEST,82.26167125610691,5202
+2,Steady regulars,RF_Default,82.45930270483015,5202

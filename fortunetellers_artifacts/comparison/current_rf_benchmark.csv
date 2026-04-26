@@ -1,0 +1,6 @@
+cluster,label,cluster_count,selected_model,valid_mape_selected,test_mape_selected,n_train,n_valid,n_test,n_test_used
+-2,Truly sporadic,1328,RF_Default,81.50972383479312,72.2952669535876,47808,7968,15936,3256
+-1,Intermittent (Croston),1627,RF_Default,79.91841938161569,71.62919966775362,58572,9762,19524,6992
+0,High cancellation risk,92,RF_Default,92.88329800605212,78.5018006393657,3312,552,1104,737
+1,Volatile mid-range,228,RF_Default,78.72424609573174,69.80639914947432,8208,1368,2736,1813
+2,Steady regulars,1281,RF_C2_BEST,82.26167125610691,74.71761146677433,46116,7686,15372,11054

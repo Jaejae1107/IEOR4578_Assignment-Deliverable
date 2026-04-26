@@ -55,8 +55,8 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 79.40854047707816,
-      "test_mape_lgbm_baseline": 90.4432251537011
+      "test_mape_selected": 72.2952669535876,
+      "test_mape_lgbm_baseline": 89.43073065309173
     },
     {
       "cluster": -1,
@@ -70,8 +70,8 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 70.94504975610005,
-      "test_mape_lgbm_baseline": 73.92190200992349
+      "test_mape_selected": 71.62919966775362,
+      "test_mape_lgbm_baseline": 75.70552159940345
     },
     {
       "cluster": 0,
@@ -85,12 +85,12 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 80.61281341502531,
-      "test_mape_lgbm_baseline": 100.92537399630184
+      "test_mape_selected": 78.50180063936568,
+      "test_mape_lgbm_baseline": 99.82905980213779
     },
     {
       "cluster": 1,
-      "label": "Steady regulars",
+      "label": "Volatile mid-range",
       "selected_model": "RF_Default",
       "params": {
         "n_estimators": 300,
@@ -100,12 +100,12 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 75.03573939834303,
-      "test_mape_lgbm_baseline": 80.3197405482507
+      "test_mape_selected": 69.80639914947432,
+      "test_mape_lgbm_baseline": 79.0504141397946
     },
     {
       "cluster": 2,
-      "label": "Volatile mid-range",
+      "label": "Steady regulars",
       "selected_model": "RF_C2_BEST",
       "params": {
         "n_estimators": 250,
@@ -115,8 +115,8 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 68.14608672399801,
-      "test_mape_lgbm_baseline": 77.86834089336446
+      "test_mape_selected": 74.71761146677433,
+      "test_mape_lgbm_baseline": 79.10211572944881
     }
   ]
 }
