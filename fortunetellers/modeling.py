@@ -670,6 +670,19 @@ def two_stage_rawlag_predict(
     return p_sale * amount_pred, "TwoStageRawLag"
 
 
+def two_stage_predict(
+    cluster_id: int,
+    train_df: pd.DataFrame,
+    pred_df: pd.DataFrame,
+    feat_cols: list[str],
+    feat_df_all: pd.DataFrame,
+    dataset: DatasetBundle,
+) -> np.ndarray:
+    raw_cache = build_raw_lag_cache_for_cluster(cluster_id, feat_df_all, dataset)
+    y_pred, _ = two_stage_rawlag_predict(cluster_id, train_df, pred_df, feat_cols, raw_cache)
+    return np.clip(y_pred, 0.0, None)
+
+
 def deepar_predict(
     train_df: pd.DataFrame,
     pred_df: pd.DataFrame,
