@@ -1,27 +1,33 @@
 {
   "best_k": 3,
   "silhouette_scores": {
-    "3": 0.47671259727437076,
-    "4": 0.39325863910568337,
-    "5": 0.3680705038286858
+    "3": 0.45878656788057043,
+    "4": 0.37439209412814517,
+    "5": 0.3494880415750251
   },
   "inertias": {
-    "3": 5886.712525434864,
-    "4": 5098.900068642533,
-    "5": 4340.924120480067
+    "3": 5420.403340540896,
+    "4": 4672.274396785906,
+    "5": 4023.1148054647783
   },
   "cluster_counts": {
-    "-2": 1384,
-    "-1": 1711,
-    "0": 82,
-    "1": 1294,
-    "2": 218
+    "-2": 1328,
+    "-1": 1627,
+    "0": 92,
+    "1": 228,
+    "2": 1281
   },
   "cluster_labels": {
     "0": "High cancellation risk",
-    "1": "Steady regulars",
-    "2": "Volatile mid-range",
+    "1": "Volatile mid-range",
+    "2": "Steady regulars",
     "-1": "Intermittent (Croston)",
     "-2": "Truly sporadic"
+  },
+  "clustering_split": {
+    "n_weeks": 82,
+    "start_week": "2009-11-30/2009-12-06",
+    "end_week": "2011-06-20/2011-06-26",
+    "rule": "all_weeks[:-24] equivalent (all weeks except validation and test horizons)"
   }
 }

@@ -188,7 +188,11 @@ def _auto_label(summary: pd.DataFrame, cluster_id: int) -> str:
     return "Steady mid-range"
 
 
-def build_feature_artifacts(retail_train: pd.DataFrame, paths: ProjectPaths) -> FeatureArtifacts:
+def build_feature_artifacts(
+    retail_train: pd.DataFrame,
+    paths: ProjectPaths,
+    clustering_weeks: pd.PeriodIndex | None = None,
+) -> FeatureArtifacts:
     feat_df = build_product_feature_table(retail_train)
 
     feat_df_sporadic = feat_df[feat_df["is_sporadic"]].copy()
@@ -240,6 +244,13 @@ def build_feature_artifacts(retail_train: pd.DataFrame, paths: ProjectPaths) -> 
         "cluster_counts": {str(int(k)): int(v) for k, v in feat_df_all["cluster"].value_counts().sort_index().items()},
         "cluster_labels": {str(int(k)): v for k, v in {**cluster_labels, -1: "Intermittent (Croston)", -2: "Truly sporadic"}.items()},
     }
+    if clustering_weeks is not None and len(clustering_weeks) > 0:
+        metadata["clustering_split"] = {
+            "n_weeks": int(len(clustering_weeks)),
+            "start_week": str(clustering_weeks.min()),
+            "end_week": str(clustering_weeks.max()),
+            "rule": "all_weeks[:-24] equivalent (all weeks except validation and test horizons)",
+        }
 
     paths.ensure_dirs()
     feat_df.to_csv(paths.product_features_full_csv)
@@ -288,7 +299,11 @@ def build_or_load_feature_artifacts(
         and paths.cluster_metadata_json.exists()
     ):
         return load_feature_artifacts(paths)
-    return build_feature_artifacts(dataset.retail_train, paths)
+    return build_feature_artifacts(
+        dataset.retail_clustering_train,
+        paths,
+        clustering_weeks=dataset.clustering_training_weeks,
+    )
 
 
 def make_weekly_actuals(transactions: pd.DataFrame, drop_cancellations: bool = True) -> pd.DataFrame:

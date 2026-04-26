@@ -28,6 +28,11 @@ def main() -> None:
     print(f"  Raw data: {paths.raw_excel}")
     print(f"  Cleaned sales CSV: {paths.cleaned_retail_csv}")
     print(f"  Product features: {paths.product_features_clustered_csv}")
+    print(
+        "  Clustering split: "
+        f"{len(dataset.clustering_training_weeks)} weeks "
+        f"({dataset.clustering_training_weeks.min()} to {dataset.clustering_training_weeks.max()})"
+    )
     print(f"  Best k: {artifacts.best_k}")
     print("  Silhouette scores:")
     for k, score in sorted(artifacts.silhouette_scores.items()):

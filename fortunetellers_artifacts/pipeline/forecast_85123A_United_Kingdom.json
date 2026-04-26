@@ -2,10 +2,10 @@
   "product_id": "85123A",
   "product_description": "WHITE HANGING HEART T-LIGHT HOLDER",
   "country": "United Kingdom",
-  "cluster": 1,
+  "cluster": 2,
   "cluster_label": "Steady regulars",
-  "selected_model": "RF_Default",
-  "test_mape_selected": 75.03573939834303,
+  "selected_model": "RF_C2_BEST",
+  "test_mape_selected": 68.14608672399801,
   "warning_flag": "normal",
   "recommendation": "Automation-ready; use forecast for replenishment planning.",
   "statistics": {
@@ -84,62 +84,62 @@
     {
       "week": "2011-12-12/2011-12-18",
       "week_start": "2011-12-12",
-      "forecast_sales": 1475.15
+      "forecast_sales": 1457.68
     },
     {
       "week": "2011-12-19/2011-12-25",
       "week_start": "2011-12-19",
-      "forecast_sales": 447.69
+      "forecast_sales": 453.47
     },
     {
       "week": "2011-12-26/2012-01-01",
       "week_start": "2011-12-26",
-      "forecast_sales": 0.63
+      "forecast_sales": 0.86
     },
     {
       "week": "2012-01-02/2012-01-08",
       "week_start": "2012-01-02",
-      "forecast_sales": 973.72
+      "forecast_sales": 920.09
     },
     {
       "week": "2012-01-09/2012-01-15",
       "week_start": "2012-01-09",
-      "forecast_sales": 1382.34
+      "forecast_sales": 1069.46
     },
     {
       "week": "2012-01-16/2012-01-22",
       "week_start": "2012-01-16",
-      "forecast_sales": 1142.93
+      "forecast_sales": 920.11
     },
     {
       "week": "2012-01-23/2012-01-29",
       "week_start": "2012-01-23",
-      "forecast_sales": 958.27
+      "forecast_sales": 790.61
     },
     {
       "week": "2012-01-30/2012-02-05",
       "week_start": "2012-01-30",
-      "forecast_sales": 1217.81
+      "forecast_sales": 987.03
     },
     {
       "week": "2012-02-06/2012-02-12",
       "week_start": "2012-02-06",
-      "forecast_sales": 1108.64
+      "forecast_sales": 931.51
     },
     {
       "week": "2012-02-13/2012-02-19",
       "week_start": "2012-02-13",
-      "forecast_sales": 1086.09
+      "forecast_sales": 904.74
     },
     {
       "week": "2012-02-20/2012-02-26",
       "week_start": "2012-02-20",
-      "forecast_sales": 1059.38
+      "forecast_sales": 855.58
     },
     {
       "week": "2012-02-27/2012-03-04",
       "week_start": "2012-02-27",
-      "forecast_sales": 1071.19
+      "forecast_sales": 881.12
     }
   ]
 }

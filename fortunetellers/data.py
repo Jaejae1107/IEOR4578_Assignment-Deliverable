@@ -11,10 +11,14 @@ from .config import NON_PRODUCT_ENTRIES, ProjectPaths
 class DatasetBundle:
     total_retail: pd.DataFrame
     all_products: pd.DataFrame
+    retail_clustering_train: pd.DataFrame
     retail_train: pd.DataFrame
+    retail_valid: pd.DataFrame
     retail_test: pd.DataFrame
     all_weeks: pd.PeriodIndex
+    clustering_training_weeks: pd.PeriodIndex
     training_weeks: pd.PeriodIndex
+    validation_weeks: pd.PeriodIndex
     test_weeks: pd.PeriodIndex
 
 
@@ -92,18 +96,32 @@ def load_or_prepare_transactions(paths: ProjectPaths, forecast_horizon: int = 12
         end=total_retail["Week"].max(),
         freq="W",
     )
+    if len(all_weeks) <= 2 * forecast_horizon:
+        raise ValueError("Not enough weekly history to reserve validation and test horizons.")
+
+    # Preserve the notebook's original clustering split for apples-to-apples segment reproduction.
+    clustering_training_weeks = all_weeks[:-2 * forecast_horizon]
     training_weeks = all_weeks[:-forecast_horizon]
+    validation_weeks = all_weeks[-2 * forecast_horizon : -forecast_horizon]
     test_weeks = all_weeks[-forecast_horizon:]
 
+    retail_clustering_train = total_retail[
+        total_retail["Week"].isin(clustering_training_weeks)
+    ].copy().reset_index(drop=True)
     retail_train = total_retail[total_retail["Week"].isin(training_weeks)].copy().reset_index(drop=True)
+    retail_valid = total_retail[total_retail["Week"].isin(validation_weeks)].copy().reset_index(drop=True)
     retail_test = total_retail[total_retail["Week"].isin(test_weeks)].copy().reset_index(drop=True)
 
     return DatasetBundle(
         total_retail=total_retail,
         all_products=all_products,
+        retail_clustering_train=retail_clustering_train,
         retail_train=retail_train,
+        retail_valid=retail_valid,
         retail_test=retail_test,
         all_weeks=all_weeks,
+        clustering_training_weeks=clustering_training_weeks,
         training_weeks=training_weeks,
+        validation_weeks=validation_weeks,
         test_weeks=test_weeks,
     )
