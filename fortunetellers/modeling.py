@@ -670,12 +670,67 @@ def two_stage_rawlag_predict(
     return p_sale * amount_pred, "TwoStageRawLag"
 
 
+def deepar_predict(
+    train_df: pd.DataFrame,
+    pred_df: pd.DataFrame,
+    h: int,
+    input_size: int = 24,
+    max_steps: int = 500,
+) -> np.ndarray:
+    import logging
+    logging.getLogger("lightning.pytorch").setLevel(logging.ERROR)
+    logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
+
+    from neuralforecast import NeuralForecast
+    from neuralforecast.models import DeepAR
+    from neuralforecast.losses.pytorch import DistributionLoss
+
+    nf_train = (
+        train_df[["StockCode", "week_start", "sales"]]
+        .rename(columns={"StockCode": "unique_id", "week_start": "ds", "sales": "y"})
+        .sort_values(["unique_id", "ds"])
+        .copy()
+    )
+    nf_train["y"] = nf_train["y"].clip(lower=0.0)
+    nf_train["ds"] = pd.to_datetime(nf_train["ds"])
+
+    model = DeepAR(
+        h=h,
+        input_size=input_size,
+        loss=DistributionLoss(distribution="NegativeBinomial", level=[90]),
+        max_steps=max_steps,
+        random_seed=42,
+    )
+    nf = NeuralForecast(models=[model], freq="7D")
+    nf.fit(nf_train)
+
+    forecasts = nf.predict().reset_index(drop=True)
+    point_col = next((c for c in forecasts.columns if c.startswith("DeepAR") and "-" not in c), None)
+    if point_col is None:
+        return np.zeros(len(pred_df))
+
+    forecasts = forecasts.rename(columns={"unique_id": "StockCode", "ds": "week_start", point_col: "_pred"})
+    forecasts["week_start"] = pd.to_datetime(forecasts["week_start"])
+
+    pred_ws = pd.to_datetime(pred_df["week_start"])
+    result = (
+        pred_df.assign(week_start=pred_ws)
+        .reset_index()
+        .merge(forecasts[["StockCode", "week_start", "_pred"]], on=["StockCode", "week_start"], how="left")
+        .set_index("index")
+        .reindex(pred_df.index)["_pred"]
+        .fillna(0.0)
+        .values
+    )
+    return np.clip(result, 0.0, None)
+
+
 def _candidate_methods_for_cluster(cluster_id: int) -> list[str]:
     # Keep model selection strictly at the cluster level.
     # We intentionally exclude per-SKU baselines and multi-stage hybrids here
     # so every candidate corresponds to one pooled model fit per cluster.
     if cluster_id in {-2, -1}:
-        return ["AggregateMLP_Disagg", "RF_Default", "LGBM_Default"]
+        return ["DeepAR", "RF_Default", "LGBM_Default", "AggregateMLP_Disagg"]
     if cluster_id == 2:
         return ["RF_C2_BEST", "RF_Default", "AggregateMLP_Disagg", "LGBM_Tuned", "LGBM_Default"]
     return ["RF_Default", "AggregateMLP_Disagg", "LGBM_Tuned", "LGBM_Default"]
@@ -737,6 +792,9 @@ def train_cluster_models(
                 elif method == "RF_C2_BEST":
                     y_valid_pred = _pred_rf_signedlog(train_df, valid_df, feat_cols, BEST_C2_RF_PARAMS)
                     meta = {}
+                elif method == "DeepAR":
+                    y_valid_pred = deepar_predict(train_df, valid_df, h=valid_df["week"].nunique())
+                    meta = {}
                 elif method == "AggregateMLP_Disagg":
                     y_valid_pred, meta = aggregate_mlp_disagg_predict(train_df, valid_df, DEFAULT_AGGREGATE_MLP_PARAMS)
                 elif method == "ResidualCorrectionRollingCV":
@@ -792,6 +850,9 @@ def train_cluster_models(
             test_meta = {}
         elif best_method == "RF_C2_BEST":
             y_test_pred = _pred_rf_signedlog(train_plus_valid, test_df, feat_cols, BEST_C2_RF_PARAMS)
+            test_meta = {}
+        elif best_method == "DeepAR":
+            y_test_pred = deepar_predict(train_plus_valid, test_df, h=test_df["week"].nunique())
             test_meta = {}
         elif best_method == "AggregateMLP_Disagg":
             y_test_pred, test_meta = aggregate_mlp_disagg_predict(train_plus_valid, test_df, DEFAULT_AGGREGATE_MLP_PARAMS)
@@ -853,6 +914,8 @@ def train_cluster_models(
             params = dict(DEFAULT_LGBM_PARAMS)
         elif model_name == "AggregateMLP_Disagg":
             params = dict(_normalize_aggregate_mlp_params(DEFAULT_AGGREGATE_MLP_PARAMS))
+        elif model_name == "DeepAR":
+            params = {"input_size": 24, "max_steps": 500}
         elif model_name == "CrostonSBA":
             params = {"alpha": CROSTON_ALPHA}
         elif model_name == "ResidualCorrectionRollingCV":
