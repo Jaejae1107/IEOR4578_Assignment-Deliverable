@@ -700,7 +700,7 @@ def deepar_predict(
         loss=DistributionLoss(distribution="NegativeBinomial", level=[90]),
         max_steps=max_steps,
         random_seed=42,
-        trainer_kwargs={"accelerator": "cpu"},
+        accelerator="cpu",
     )
     nf = NeuralForecast(models=[model], freq="7D")
     nf.fit(nf_train)
