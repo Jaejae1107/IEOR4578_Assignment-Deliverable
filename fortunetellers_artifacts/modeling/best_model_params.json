@@ -1,7 +1,7 @@
 {
   "forecast_horizon": "next_12_weeks",
-  "cluster_feature_file": "/Users/jaewoncho/Documents/New project/fortunetellers_artifacts/clustering/product_features_clustered.csv",
-  "sales_file": "/Users/jaewoncho/Documents/New project/fortunetellers_artifacts/processed/total_retail_cleaned.csv",
+  "cluster_feature_file": "/Users/jackchiu/assignments/Forecasting/project2/IEOR4578_Assignment-Deliverable/fortunetellers_artifacts/clustering/product_features_clustered.csv",
+  "sales_file": "/Users/jackchiu/assignments/Forecasting/project2/IEOR4578_Assignment-Deliverable/fortunetellers_artifacts/processed/total_retail_cleaned.csv",
   "defaults": {
     "BASELINE_RF_PARAMS": {
       "n_estimators": 300,
@@ -55,7 +55,7 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 72.2952669535876,
+      "test_mape_selected": 72.28551447707149,
       "test_mape_lgbm_baseline": 89.43073065309173
     },
     {
@@ -70,7 +70,7 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 71.62919966775362,
+      "test_mape_selected": 71.569667076853,
       "test_mape_lgbm_baseline": 75.70552159940345
     },
     {
@@ -85,7 +85,7 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 78.50180063936568,
+      "test_mape_selected": 79.0846610461492,
       "test_mape_lgbm_baseline": 99.82905980213779
     },
     {
@@ -100,23 +100,23 @@
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 69.80639914947432,
-      "test_mape_lgbm_baseline": 79.0504141397946
+      "test_mape_selected": 69.5680233222484,
+      "test_mape_lgbm_baseline": 79.05041413979455
     },
     {
       "cluster": 2,
       "label": "Steady regulars",
-      "selected_model": "RF_C2_BEST",
+      "selected_model": "RF_Default",
       "params": {
-        "n_estimators": 250,
+        "n_estimators": 300,
         "max_depth": 20,
         "min_samples_leaf": 1,
         "max_features": "sqrt",
         "random_state": 42,
         "n_jobs": -1
       },
-      "test_mape_selected": 74.71761146677433,
-      "test_mape_lgbm_baseline": 79.10211572944881
+      "test_mape_selected": 75.17890221947481,
+      "test_mape_lgbm_baseline": 79.1021157294488
     }
   ]
 }

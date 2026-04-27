@@ -1,17 +1,22 @@
 cluster,label,candidate,valid_mape,n_valid,meta
--2,Truly sporadic,RF_Default,81.50972383479312,1458,{}
--2,Truly sporadic,LGBM_Tuned,95.53542975285842,1458,"{""params"": {""n_estimators"": 700, ""learning_rate"": 0.03, ""num_leaves"": 63, ""min_child_samples"": 40, ""subsample"": 0.9, ""colsample_bytree"": 0.9, ""reg_alpha"": 0.2, ""reg_lambda"": 0.5}}"
+-2,Truly sporadic,RF_Default,82.4314250779948,1458,{}
+-2,Truly sporadic,DeepAR,85.65596154428195,1458,{}
 -2,Truly sporadic,LGBM_Default,95.53542975285842,1458,{}
--1,Intermittent (Croston),RF_Default,79.9184193816157,2831,{}
--1,Intermittent (Croston),LGBM_Tuned,88.90787513348825,2831,"{""params"": {""n_estimators"": 700, ""learning_rate"": 0.03, ""num_leaves"": 63, ""min_child_samples"": 40, ""subsample"": 0.9, ""colsample_bytree"": 0.9, ""reg_alpha"": 0.2, ""reg_lambda"": 0.5}}"
+-2,Truly sporadic,AggregateMLP_Disagg,207.12601730617519,1458,"{""params"": {""hidden_layer_sizes"": [16, 8], ""activation"": ""tanh"", ""solver"": ""lbfgs"", ""alpha"": 0.01, ""max_iter"": 1000, ""random_state"": 42}, ""n_aggregate_train_weeks"": 10, ""n_aggregate_pred_weeks"": 6, ""n_skus"": 1328}"
+-1,Intermittent (Croston),RF_Default,80.14749249246833,2831,{}
 -1,Intermittent (Croston),LGBM_Default,88.90787513348825,2831,{}
-0,High cancellation risk,RF_Default,92.88329800605212,336,{}
+-1,Intermittent (Croston),DeepAR,92.60296118264624,2831,{}
+-1,Intermittent (Croston),AggregateMLP_Disagg,191.02826029636083,2831,"{""params"": {""hidden_layer_sizes"": [16, 8], ""activation"": ""tanh"", ""solver"": ""lbfgs"", ""alpha"": 0.01, ""max_iter"": 1000, ""random_state"": 42}, ""n_aggregate_train_weeks"": 10, ""n_aggregate_pred_weeks"": 6, ""n_skus"": 1627}"
+0,High cancellation risk,RF_Default,93.6670140805256,336,{}
 0,High cancellation risk,LGBM_Tuned,123.86072237537813,336,"{""params"": {""n_estimators"": 800, ""learning_rate"": 0.025, ""num_leaves"": 79, ""min_child_samples"": 45, ""subsample"": 0.9, ""colsample_bytree"": 0.85, ""reg_alpha"": 0.05, ""reg_lambda"": 0.2}}"
 0,High cancellation risk,LGBM_Default,141.47014138432053,336,{}
-1,Volatile mid-range,RF_Default,78.72424609573174,777,{}
-1,Volatile mid-range,LGBM_Tuned,82.25406947866301,777,"{""params"": {""n_estimators"": 500, ""learning_rate"": 0.03, ""num_leaves"": 31, ""min_child_samples"": 40, ""subsample"": 0.9, ""colsample_bytree"": 0.9, ""reg_alpha"": 0.0, ""reg_lambda"": 0.0}}"
-1,Volatile mid-range,LGBM_Default,84.65257715626412,777,{}
-2,Steady regulars,RF_C2_BEST,82.26167125610691,5202,{}
-2,Steady regulars,RF_Default,82.45930270483015,5202,{}
+0,High cancellation risk,AggregateMLP_Disagg,399.4331786800164,336,"{""params"": {""hidden_layer_sizes"": [16, 8], ""activation"": ""tanh"", ""solver"": ""lbfgs"", ""alpha"": 0.01, ""max_iter"": 1000, ""random_state"": 42}, ""n_aggregate_train_weeks"": 10, ""n_aggregate_pred_weeks"": 6, ""n_skus"": 92}"
+1,Volatile mid-range,RF_Default,79.49390054462236,777,{}
+1,Volatile mid-range,LGBM_Tuned,82.254069478663,777,"{""params"": {""n_estimators"": 500, ""learning_rate"": 0.03, ""num_leaves"": 31, ""min_child_samples"": 40, ""subsample"": 0.9, ""colsample_bytree"": 0.9, ""reg_alpha"": 0.0, ""reg_lambda"": 0.0}}"
+1,Volatile mid-range,LGBM_Default,84.60630752709156,777,{}
+1,Volatile mid-range,AggregateMLP_Disagg,1078.1705002100675,777,"{""params"": {""hidden_layer_sizes"": [16, 8], ""activation"": ""tanh"", ""solver"": ""lbfgs"", ""alpha"": 0.01, ""max_iter"": 1000, ""random_state"": 42}, ""n_aggregate_train_weeks"": 10, ""n_aggregate_pred_weeks"": 6, ""n_skus"": 228}"
+2,Steady regulars,RF_Default,82.62720988550615,5202,{}
+2,Steady regulars,RF_C2_BEST,82.66013703300061,5202,{}
 2,Steady regulars,LGBM_Tuned,86.53358239836834,5202,"{""params"": {""n_estimators"": 700, ""learning_rate"": 0.05, ""num_leaves"": 31, ""min_child_samples"": 30, ""subsample"": 0.9, ""colsample_bytree"": 0.9, ""reg_alpha"": 0.0, ""reg_lambda"": 0.0}}"
 2,Steady regulars,LGBM_Default,88.8675771807864,5202,{}
+2,Steady regulars,AggregateMLP_Disagg,618.2853531153505,5202,"{""params"": {""hidden_layer_sizes"": [16, 8], ""activation"": ""tanh"", ""solver"": ""lbfgs"", ""alpha"": 0.01, ""max_iter"": 1000, ""random_state"": 42}, ""n_aggregate_train_weeks"": 10, ""n_aggregate_pred_weeks"": 6, ""n_skus"": 1281}"

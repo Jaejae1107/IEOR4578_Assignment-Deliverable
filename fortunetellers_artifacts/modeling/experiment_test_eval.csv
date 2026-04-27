@@ -1,0 +1,7 @@
+cluster,label,candidate,test_mape,n_test
+-2,Truly sporadic,RF_Default,72.29,3256
+-2,Truly sporadic,TwoStageRawLag,96.98,3256
+-2,Truly sporadic,DeepAR,89.76,3256
+-1,Intermittent (Croston),RF_Default,71.57,6992
+-1,Intermittent (Croston),TwoStageRawLag,76.53,6992
+-1,Intermittent (Croston),DeepAR,94.67,6992
