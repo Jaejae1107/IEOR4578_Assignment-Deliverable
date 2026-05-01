@@ -9,3 +9,15 @@ error_fare_scan_output.json
 .venv_pdf/
 data/raw/*.xlsx
 fortunetellers_artifacts/processed/
+
+# Editor / IDE / misc local files
+.Rhistory
+.Rapp.history
+.ipynb_checkpoints/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Streamlit local cache
+.streamlit/secrets.toml
