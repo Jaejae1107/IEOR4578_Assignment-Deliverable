@@ -744,7 +744,7 @@ def _candidate_methods_for_cluster(cluster_id: int) -> list[str]:
     # We intentionally exclude per-SKU baselines and multi-stage hybrids here
     # so every candidate corresponds to one pooled model fit per cluster.
     if cluster_id in {-2, -1}:
-        return ["DeepAR", "RF_Default", "LGBM_Default", "AggregateMLP_Disagg"]
+        return ["DeepAR", "RF_Default", "LGBM_Default", "AggregateMLP_Disagg", "TwoStageRawLag"]
     if cluster_id == 2:
         return ["RF_C2_BEST", "RF_Default", "AggregateMLP_Disagg", "LGBM_Tuned", "LGBM_Default"]
     return ["RF_Default", "AggregateMLP_Disagg", "LGBM_Tuned", "LGBM_Default"]
