@@ -87,6 +87,7 @@ class ModelingArtifacts:
     candidate_df: pd.DataFrame
     tuned_trials_df: pd.DataFrame
     best_model_payload: dict[str, Any]
+    test_predictions_df: pd.DataFrame
 
 
 def mape_100(y_true: np.ndarray, y_pred: np.ndarray, min_abs_actual: float = MIN_ABS_ACTUAL) -> tuple[float, int]:
@@ -762,6 +763,7 @@ def train_cluster_models(
     candidate_rows: list[dict[str, Any]] = []
     tuned_trial_rows: list[dict[str, Any]] = []
     tuned_params_by_cluster: dict[int, dict[str, Any]] = {}
+    prediction_rows: list[pd.DataFrame] = []
 
     for cluster_id in sorted(panels):
         label = panels[cluster_id]["label"]
@@ -878,6 +880,29 @@ def train_cluster_models(
 
         test_mape, n_test = mape_100(test_df["sales"].values, y_test_pred)
 
+        pred_df = test_df[["StockCode", "week"]].copy()
+        pred_df["cluster"] = cluster_id
+        pred_df["label"] = label
+        pred_df["selected_model"] = best_method
+        pred_df["actual"] = test_df["sales"].values
+        pred_df["predicted"] = y_test_pred
+        actual = test_df["sales"].values
+        with np.errstate(divide="ignore", invalid="ignore"):
+            signed_pct = np.where(
+                np.abs(actual) >= MIN_ABS_ACTUAL,
+                (y_test_pred - actual) / np.abs(actual) * 100,
+                np.nan,
+            )
+        pred_df["signed_pct_error"] = signed_pct
+        weeks_sorted = sorted(test_df["week"].unique())
+        n = len(weeks_sorted)
+        period_map = {
+            w: "P1" if i < n // 3 else ("P2" if i < 2 * n // 3 else "P3")
+            for i, w in enumerate(weeks_sorted)
+        }
+        pred_df["period"] = pred_df["week"].map(period_map)
+        prediction_rows.append(pred_df)
+
         try:
             lgb_baseline_model = fit_signedlog_model_with_params(train_plus_valid, feat_cols, DEFAULT_LGBM_PARAMS)
             y_test_lgb = predict_signedlog_model(lgb_baseline_model, test_df, feat_cols)
@@ -909,9 +934,12 @@ def train_cluster_models(
     if not tuned_trials_df.empty:
         tuned_trials_df = tuned_trials_df.sort_values(["cluster", "valid_mape"], na_position="last").reset_index(drop=True)
 
+    test_predictions_df = pd.concat(prediction_rows, ignore_index=True) if prediction_rows else pd.DataFrame()
+
     selection_df.to_csv(paths.selection_summary_csv, index=False)
     candidate_df.to_csv(paths.candidate_metrics_csv, index=False)
     tuned_trials_df.to_csv(paths.tuned_lgbm_trials_csv, index=False)
+    test_predictions_df.to_csv(paths.test_predictions_csv, index=False)
 
     cluster_configs: list[dict[str, Any]] = []
     for _, row in selection_df.iterrows():
@@ -972,4 +1000,5 @@ def train_cluster_models(
         candidate_df=candidate_df,
         tuned_trials_df=tuned_trials_df,
         best_model_payload=payload,
+        test_predictions_df=test_predictions_df,
     )

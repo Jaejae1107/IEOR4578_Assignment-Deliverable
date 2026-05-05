@@ -206,6 +206,7 @@ class ProjectPaths:
     candidate_metrics_csv: Path = field(init=False)
     tuned_lgbm_trials_csv: Path = field(init=False)
     best_model_params_json: Path = field(init=False)
+    test_predictions_csv: Path = field(init=False)
 
     def __post_init__(self) -> None:
         self.raw_excel = Path(self.raw_excel).expanduser().resolve()
@@ -227,6 +228,7 @@ class ProjectPaths:
         self.candidate_metrics_csv = self.modeling_dir / "cluster_candidate_metrics.csv"
         self.tuned_lgbm_trials_csv = self.modeling_dir / "cluster_tuned_lgbm_trials.csv"
         self.best_model_params_json = self.modeling_dir / "best_model_params.json"
+        self.test_predictions_csv = self.modeling_dir / "test_predictions.csv"
 
     def ensure_dirs(self) -> None:
         for path in (

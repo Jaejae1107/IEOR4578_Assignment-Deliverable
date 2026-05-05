@@ -4,10 +4,11 @@ scipy>=1.10,<2
 scikit-learn>=1.4,<2
 openpyxl>=3.1,<4
 holidays>=0.40
+matplotlib>=3.7
 
 # Optional if you want native LightGBM instead of the built-in fallback.
 # On macOS you may need: brew install libomp
-# lightgbm>=4.0
+lightgbm>=4.0
 
 # Required for DeepAR (experiment/deepar-c-neg-1-c-neg-2 branch)
 neuralforecast>=1.6
